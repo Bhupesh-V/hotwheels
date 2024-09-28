@@ -13,7 +13,6 @@
     <meta name="og:type" content="website">
     <meta name="og:site_name" content="Bhupesh's Hotwheels Collection">
     <meta name="og:locale" content="en_US">
-    <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta property="twitter:domain" content="hotwheels.bhupesh.me">
     <meta property="twitter:url" content="https://hotwheels.bhupesh.me/">
@@ -25,6 +24,7 @@
     <style>
         * {
             font-family: Arial, sans-serif;
+            background-color: floralwhite;
         }
 
         h1 {
@@ -33,7 +33,7 @@
             align-items: center;
             /* Optional: add some space between the text and the image */
             justify-content: center;
-            font-size: 28px;
+            font-size: 25px;
         }
 
         .collectionTable table {
@@ -44,7 +44,7 @@
 
         .collectionTable th,
         .collectionTable td {
-            border: 1px solid #ddd;
+            border: 1px solid #000000;
             padding: 8px;
             text-align: center;
         }
@@ -53,28 +53,35 @@
             background-color: #f2f2f2;
             color: #333;
         }
-
-        .collectionTable tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .collectionTable tr:hover {
-            background-color: #eaeaea;
+        #totalCount {
+            text-align: center;
+            font-size: 17px;
         }
     </style>
 </head>
 
 <body>
     <h1>Bhupesh's <img height="90px" src="./static/hotwheels-logo.png" alt=""> Collection</h1>
+    <p id="totalCount"></p>
     <div class="collectionTable">
-
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Preview</th>
+                </tr>
+            </thead>
+            <tbody id="collectionBody">
+                <!-- Content will be inserted here -->
+            </tbody>
+        </table>
     </div>
 
     <script>
         // Step 1: Define the function to fetch and display the content
         function fetchAndDisplayCollection() {
-            // Step 2: URL of the raw text/html content
-            const url = "https://gist.githubusercontent.com/Bhupesh-V/d5756d3642715c2ec055c26fafc3de1d/raw/collection.md";
+            // Step 2: URL of the raw JSON content
+            const url = "https://gist.githubusercontent.com/Bhupesh-V/e0226f788e35b21e82ddf030f481a53f/raw/hw.json";
 
             // Step 3: Use fetch API to get the content from the URL
             fetch(url)
@@ -83,12 +90,34 @@
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    // Step 5: Return the text content of the response
-                    return response.text();
+                    // Step 5: Return the JSON content of the response
+                    return response.json();
                 })
                 .then(data => {
-                    // Step 6: Find the "collectionTable" div and set its innerHTML to the fetched data
-                    document.querySelector('.collectionTable').innerHTML = data;
+                    // Step 6: Find the "collectionBody" tbody and populate it with the fetched data
+                    const collectionBody = document.getElementById('collectionBody');
+                    const totalCount = document.getElementById('totalCount');
+                    totalCount.textContent = `Bhupesh's collection hosts a total of ${data.cars.length} cars.`;
+
+                    data.cars.forEach(car => {
+                        const row = document.createElement('tr');
+                        const nameCell = document.createElement('td');
+                        const previewCell = document.createElement('td');
+
+                        nameCell.textContent = car.name;
+
+                        if (car.preview) {
+                            const img = document.createElement('img');
+                            img.src = car.preview;
+                            img.alt = car.name;
+                            img.height = 50; // Set a fixed height for the preview images
+                            previewCell.appendChild(img);
+                        }
+
+                        row.appendChild(nameCell);
+                        row.appendChild(previewCell);
+                        collectionBody.appendChild(row);
+                    });
                 })
                 .catch(error => {
                     // Step 7: Log any errors to the console
