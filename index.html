@@ -2,23 +2,23 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Bhupesh's Hotwheels Collection">
-    <meta name="author" content="Bhupesh Varshney">
-    <meta name="og:title" content="Bhupesh's Hotwheels Collection">
-    <meta name="og:description" content="Rekindling my love for Hotwheels by being an amateur collector">
-    <meta name="og:image" content="https://hotwheels.bhupesh.me/static/hotwheels.png">
-    <meta name="og:url" content="https://hotwheels.bhupesh.me/">
-    <meta name="og:type" content="website">
-    <meta name="og:site_name" content="Bhupesh's Hotwheels Collection">
-    <meta name="og:locale" content="en_US">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="hotwheels.bhupesh.me">
-    <meta property="twitter:url" content="https://hotwheels.bhupesh.me/">
-    <meta name="twitter:title" content="Bhupesh's Hotwheels Collection">
-    <meta name="twitter:description" content="Rekindling my love for Hotwheels by being an amateur collector">
-    <meta name="twitter:image" content="https://hotwheels.bhupesh.me/static/hotwheels.png">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Bhupesh's Hotwheels Collection" />
+    <meta name="author" content="Bhupesh Varshney" />
+    <meta name="og:title" content="Bhupesh's Hotwheels Collection" />
+    <meta name="og:description" content="Rekindling my love for Hotwheels by being an amateur collector" />
+    <meta name="og:image" content="https://hotwheels.bhupesh.me/static/hotwheels.png" />
+    <meta name="og:url" content="https://hotwheels.bhupesh.me/" />
+    <meta name="og:type" content="website" />
+    <meta name="og:site_name" content="Bhupesh's Hotwheels Collection" />
+    <meta name="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="hotwheels.bhupesh.me" />
+    <meta property="twitter:url" content="https://hotwheels.bhupesh.me/" />
+    <meta name="twitter:title" content="Bhupesh's Hotwheels Collection" />
+    <meta name="twitter:description" content="Rekindling my love for Hotwheels by being an amateur collector" />
+    <meta name="twitter:image" content="https://hotwheels.bhupesh.me/static/hotwheels.png" />
 
     <title>Bhupesh's Hotwheels Collection 🏎️</title>
     <style>
@@ -53,15 +53,75 @@
             background-color: #f2f2f2;
             color: #333;
         }
+
         #totalCount {
             text-align: center;
             font-size: 17px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .modal-content,
+        #caption {
+            animation-name: zoom;
+            animation-duration: 0.6s;
+        }
+
+        @keyframes zoom {
+            from {
+                transform: scale(0);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            background: transparent;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
-    <h1>Bhupesh's <img height="90px" src="./static/hotwheels-logo.png" alt=""> Collection</h1>
+    <h1>
+        Bhupesh's
+        <img height="90px" src="./static/hotwheels-logo.png" alt="" /> Collection
+    </h1>
     <p id="totalCount"></p>
     <div class="collectionTable">
         <table>
@@ -77,40 +137,51 @@
         </table>
     </div>
 
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="img01" />
+    </div>
+
     <script>
         // Step 1: Define the function to fetch and display the content
         function fetchAndDisplayCollection() {
             // Step 2: URL of the raw JSON content
-            const url = "https://gist.githubusercontent.com/Bhupesh-V/e0226f788e35b21e82ddf030f481a53f/raw/hw.json";
+            const url =
+                "https://gist.githubusercontent.com/Bhupesh-V/e0226f788e35b21e82ddf030f481a53f/raw/hw.json";
 
             // Step 3: Use fetch API to get the content from the URL
             fetch(url)
-                .then(response => {
+                .then((response) => {
                     // Step 4: Check if the response is ok (status in the range 200-299)
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error("Network response was not ok");
                     }
                     // Step 5: Return the JSON content of the response
                     return response.json();
                 })
-                .then(data => {
+                .then((data) => {
                     // Step 6: Find the "collectionBody" tbody and populate it with the fetched data
-                    const collectionBody = document.getElementById('collectionBody');
-                    const totalCount = document.getElementById('totalCount');
+                    const collectionBody = document.getElementById("collectionBody");
+                    const totalCount = document.getElementById("totalCount");
                     totalCount.textContent = `Bhupesh's collection hosts a total of ${data.cars.length} cars.`;
 
-                    data.cars.forEach(car => {
-                        const row = document.createElement('tr');
-                        const nameCell = document.createElement('td');
-                        const previewCell = document.createElement('td');
+                    data.cars.forEach((car) => {
+                        const row = document.createElement("tr");
+                        const nameCell = document.createElement("td");
+                        const previewCell = document.createElement("td");
 
                         nameCell.textContent = car.name;
 
                         if (car.preview) {
-                            const img = document.createElement('img');
+                            const img = document.createElement("img");
                             img.src = car.preview;
                             img.alt = car.name;
-                            img.height = 50; // Set a fixed height for the preview images
+                            img.height = 100; // Set a fixed height for the preview images
+                            img.loading = "lazy";
+                            img.onclick = function () {
+                                openModal(img);
+                            }; // Add click event to open modal
                             previewCell.appendChild(img);
                         }
 
@@ -119,14 +190,34 @@
                         collectionBody.appendChild(row);
                     });
                 })
-                .catch(error => {
+                .catch((error) => {
                     // Step 7: Log any errors to the console
-                    console.error('There was a problem with your fetch operation:', error);
+                    console.error(
+                        "There was a problem with your fetch operation:",
+                        error
+                    );
                 });
         }
 
         // Step 8: Call the function to execute it
         fetchAndDisplayCollection();
+
+        // Function to open the modal
+        function openModal(img) {
+            const modal = document.getElementById("myModal");
+            const modalImg = document.getElementById("img01");
+
+            modal.style.display = "block";
+            modalImg.src = img.src;
+
+            // Get the <span> element that closes the modal
+            const span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            };
+        }
     </script>
 </body>
 
