@@ -124,7 +124,11 @@
         Bhupesh's
         <img height="101px" src="./static/hotwheels-logo.png" alt="" /> Collection
     </h1>
-    <p id="totalCount"></p>
+    <center>
+        <p id="totalCount"></p>
+        <p id="last-updated"></p>
+    </center>
+
     <div class="collectionTable">
         <table>
             <thead>
@@ -147,7 +151,7 @@
 
     <script>
         // Step 1: Define the function to fetch and display the content
-        function fetchAndDisplayCollection() {
+        function loadCars() {
             // Step 2: URL of the raw JSON content
             const url =
                 "https://gist.githubusercontent.com/Bhupesh-V/e0226f788e35b21e82ddf030f481a53f/raw/hw.json";
@@ -184,6 +188,7 @@
                             img.onclick = function () {
                                 openModal(img);
                             }; // Add click event to open modal
+                            img.style.cursor = "pointer"; // Change cursor to pointer on hover
                             previewCell.appendChild(img);
                         }
 
@@ -201,9 +206,6 @@
                 });
         }
 
-        // Step 8: Call the function to execute it
-        fetchAndDisplayCollection();
-
         // Function to open the modal
         function openModal(img) {
             const modal = document.getElementById("myModal");
@@ -220,6 +222,32 @@
                 modal.style.display = "none";
             };
         }
+        function fetchGistMetadata() {
+            const gistUrl = "https://api.github.com/gists/e0226f788e35b21e82ddf030f481a53f";
+            return fetch(gistUrl)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .catch((error) => {
+                    console.error("There was a problem with your fetch operation:", error);
+                });
+        }
+        function updateLastUpdatedTime() {
+            fetchGistMetadata().then((data) => {
+                const options = { day: '2-digit', month: 'long', year: 'numeric' };
+                const lastUpdated = new Date(data.updated_at).toLocaleDateString('en-US', options);
+                const welcomeText = document.getElementById("last-updated");
+                welcomeText.innerHTML = `<b>Last updated: ${lastUpdated}</b>` + welcomeText.innerHTML;
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadCars();
+            updateLastUpdatedTime();
+        });
     </script>
 </body>
 
